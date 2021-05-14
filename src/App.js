@@ -3,6 +3,7 @@ import axios from "axios";
 import "./App.css";
 import Coin from "./Coin";
 import Navigator from "./Navigator";
+import * as sort from "sort.js";
 
 function App() {
   const [coins, setCoins] = useState([]);
@@ -10,11 +11,11 @@ function App() {
   const [orderedCoins, setOrderedCoins] = useState([]);
   const [search, setSearch] = useState("");
   const [counter, setCounter] = useState(0);
-  const [nameSorted, setNameSorted] = useState(false);
-  const [symbolSorted, setSymbolSorted] = useState(false);
-  const [currentPriceSorted, setCurrentPriceSorted] = useState(false);
-  const [marketCapSorted, setMarketCapSorted] = useState(false);
-  const [priceChangeSorted, setPriceChangeSorted] = useState(false);
+  const [namesSorted, setNamesSorted] = useState(false);
+  const [symbolsSorted, setSymbolsSorted] = useState(false);
+  const [currentPricesSorted, setCurrentPricesSorted] = useState(false);
+  const [marketCapsSorted, setMarketCapsSorted] = useState(false);
+  const [priceChangesSorted, setPriceChangesSorted] = useState(false);
   const [totalVolumeSorted, setTotalVolumeSorted] = useState(false);
 
   console.log(filteredCoins);
@@ -47,6 +48,82 @@ function App() {
     setSearch(e.target.value);
   };
 
+  const sortNames = () => {
+    namesSorted
+      ? setOrderedCoins(
+          filteredCoins.sort((a, b) =>
+            a.name.toLowerCase() > b.name.toLowerCase() ? -1 : 1
+          )
+        )
+      : setOrderedCoins(
+          filteredCoins.sort((a, b) =>
+            a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+          )
+        );
+    setNamesSorted(!namesSorted);
+  };
+
+  const sortSymbols = () => {
+    symbolsSorted
+      ? setOrderedCoins(
+          filteredCoins.sort((a, b) => (a.symbol > b.symbol ? -1 : 1))
+        )
+      : setOrderedCoins(
+          filteredCoins.sort((a, b) => (a.symbol > b.symbol ? 1 : -1))
+        );
+    setSymbolsSorted(!symbolsSorted);
+  };
+
+  const sortPrices = () => {
+    currentPricesSorted
+      ? setOrderedCoins(
+          filteredCoins.sort((a, b) => a.current_price - b.current_price)
+        )
+      : setOrderedCoins(
+          filteredCoins.sort((a, b) => b.current_price - a.current_price)
+        );
+    setCurrentPricesSorted(!currentPricesSorted);
+  };
+
+  const sortVolume = () => {
+    totalVolumeSorted
+      ? setOrderedCoins(
+          filteredCoins.sort((a, b) => a.total_volume - b.total_volume)
+        )
+      : setOrderedCoins(
+          filteredCoins.sort((a, b) => b.total_volume - a.total_volume)
+        );
+    setTotalVolumeSorted(!totalVolumeSorted);
+  };
+
+  const sortMktCap = () => {
+    marketCapsSorted
+      ? setOrderedCoins(
+          filteredCoins.sort((a, b) => a.market_cap - b.market_cap)
+        )
+      : setOrderedCoins(
+          filteredCoins.sort((a, b) => b.market_cap - a.market_cap)
+        );
+    setMarketCapsSorted(!marketCapsSorted);
+  };
+
+  const sortPriceChanges = () => {
+    priceChangesSorted
+      ? setOrderedCoins(
+          filteredCoins.sort(
+            (a, b) =>
+              a.price_change_percentage_24h - b.price_change_percentage_24h
+          )
+        )
+      : setOrderedCoins(
+          filteredCoins.sort(
+            (a, b) =>
+              b.price_change_percentage_24h - a.price_change_percentage_24h
+          )
+        );
+    setPriceChangesSorted(!priceChangesSorted);
+  };
+
   return (
     <div className="coin-app">
       <div className="coin-search">
@@ -68,17 +145,7 @@ function App() {
               name
               <button
                 onClick={() => {
-                  console.log("filtered name");
-                  nameSorted
-                    ? setOrderedCoins(
-                        filteredCoins.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? -1 : 1))
-                      )
-                    : setOrderedCoins(
-                        filteredCoins.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
-                      );
-                  setNameSorted(!nameSorted);
-
-                  console.log(orderedCoins);
+                  sortNames();
                 }}
                 className="btn-sort"
               >
@@ -89,20 +156,7 @@ function App() {
               Symbol
               <button
                 onClick={() => {
-                  console.log("sorted symbol");
-
-                  symbolSorted
-                    ? setOrderedCoins(
-                        filteredCoins.sort((a, b) =>
-                          a.symbol > b.symbol ? -1 : 1
-                        )
-                      )
-                    : setOrderedCoins(
-                        filteredCoins.sort((a, b) =>
-                          a.symbol > b.symbol ? 1 : -1
-                        )
-                      );
-                  setSymbolSorted(!symbolSorted);
+                  sortSymbols();
                 }}
                 className="btn-sort"
               >
@@ -115,20 +169,7 @@ function App() {
               price
               <button
                 onClick={() => {
-                  console.log("sorted price");
-
-                  currentPriceSorted
-                    ? setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) => a.current_price - b.current_price
-                        )
-                      )
-                    : setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) => b.current_price - a.current_price
-                        )
-                      );
-                  setCurrentPriceSorted(!currentPriceSorted);
+                  sortPrices();
                 }}
                 className="btn-sort"
               >
@@ -139,19 +180,7 @@ function App() {
               volume
               <button
                 onClick={() => {
-                  console.log("sorted volume");
-                  totalVolumeSorted
-                    ? setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) => a.total_volume - b.total_volume
-                        )
-                      )
-                    : setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) => b.total_volume - a.total_volume
-                        )
-                      );
-                  setTotalVolumeSorted(!totalVolumeSorted);
+                  sortVolume();
                 }}
                 className="btn-sort"
               >
@@ -162,23 +191,7 @@ function App() {
               change
               <button
                 onClick={() => {
-                  console.log("sorted change");
-                  priceChangeSorted
-                    ? setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) =>
-                            a.price_change_percentage_24h -
-                            b.price_change_percentage_24h
-                        )
-                      )
-                    : setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) =>
-                            b.price_change_percentage_24h -
-                            a.price_change_percentage_24h
-                        )
-                      );
-                  setPriceChangeSorted(!priceChangeSorted);
+                  sortPriceChanges();
                 }}
                 className="btn-sort"
               >
@@ -189,19 +202,7 @@ function App() {
               Mkt Cap:
               <button
                 onClick={() => {
-                  console.log("sorted mktcap");
-                  marketCapSorted
-                    ? setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) => a.market_cap - b.market_cap
-                        )
-                      )
-                    : setOrderedCoins(
-                        filteredCoins.sort(
-                          (a, b) => b.market_cap - a.market_cap
-                        )
-                      );
-                  setMarketCapSorted(!marketCapSorted);
+                  sortMktCap();
                 }}
                 className="btn-sort"
               >
