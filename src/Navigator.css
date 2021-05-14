@@ -1,0 +1,7 @@
+.sort-container {
+    overflow: hidden;
+    border: 2px solid white;
+    border-radius: 20px;
+    position: sticky;
+    top: 0;
+}
